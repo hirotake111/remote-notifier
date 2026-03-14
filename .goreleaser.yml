@@ -17,4 +17,4 @@ brews:
   - repository:
       owner: hirotake111
       name: homebrew-tap
-      token: "{{ .Env.TAP_GITHUB_TOKEN }}"
+      token: "{{ .Env.GORELEASER_TOKEN }}"
