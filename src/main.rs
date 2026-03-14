@@ -14,7 +14,7 @@ async fn notify(Json(payload): Json<Notification>) -> &'static str {
     #[cfg(target_os = "macos")]
     {
         let script = format!(
-            "display notification \"{}\" with title \"Remote Notifier\"",
+            "display notification \"{}\" with title \"Remote Notifier\" sound name \"Ping\"",
             message.replace('"', "\\\"")
         );
         let _ = Command::new("osascript")
@@ -27,8 +27,15 @@ async fn notify(Json(payload): Json<Notification>) -> &'static str {
     #[cfg(target_os = "linux")]
     {
         let _ = Command::new("notify-send")
+            .arg("-u")
+            .arg("critical")
             .arg("Remote Notifier")
             .arg(message)
+            .output()
+            .await;
+
+        let _ = Command::new("paplay")
+            .arg("/usr/share/sounds/freedesktop/stereo/complete.ogg")
             .output()
             .await;
     }
