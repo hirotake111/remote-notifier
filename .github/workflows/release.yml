@@ -24,10 +24,17 @@ jobs:
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v6
         with:
-          args: release --clean -f .goreleaser-linux.yml
+          args: build --clean -f .goreleaser-linux.yml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GORELEASER_TOKEN: ${{ secrets.GORELEASER_TOKEN }}
+
+      - name: Upload Linux binaries
+        run: |
+          for f in dist/remote-notifier_*_linux_*.tar.gz; do
+            gh release upload "${{ github.ref_name }}" "$f" --clobber
+          done
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   release-macos:
     runs-on: macos-latest
