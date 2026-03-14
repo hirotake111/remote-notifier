@@ -12,3 +12,7 @@ builds:
 
 archives:
   - formats: [tar.gz]
+
+release:
+  mode: upload
+  draft: true

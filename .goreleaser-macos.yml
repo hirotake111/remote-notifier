@@ -13,6 +13,9 @@ builds:
 archives:
   - formats: [tar.gz]
 
+release:
+  draft: false
+
 brews:
   - repository:
       owner: hirotake111
