@@ -3,16 +3,14 @@ version: 2
 project_name: remote-notifier
 
 builds:
-  - binary: remote-notifier
-    goos:
-      - linux
-      - darwin
-    goarch:
-      - amd64
-      - arm64
-    env:
-      - CGO_ENABLED=0
-    build_hook: ./build-hook.sh
+  - builder: rust
+    tool: cross
+    command: build
+    targets:
+      - x86_64-unknown-linux-gnu
+      - aarch64-unknown-linux-gnu
+      - x86_64-apple-darwin
+      - aarch64-apple-darwin
 
 archives:
   - formats: [tar.gz]
