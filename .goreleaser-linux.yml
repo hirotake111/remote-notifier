@@ -12,6 +12,3 @@ builds:
 
 archives:
   - formats: [tar.gz]
-
-release:
-  skip: true
