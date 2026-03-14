@@ -1,4 +1,5 @@
 use axum::{extract::Json, routing::post, Router};
+use daemonize::Daemonize;
 use serde::Deserialize;
 use std::net::SocketAddr;
 use tokio::process::Command;
@@ -43,14 +44,43 @@ async fn notify(Json(payload): Json<Notification>) -> &'static str {
     "OK"
 }
 
-#[tokio::main]
-async fn main() {
-    let app = Router::new().route("/", post(notify));
+fn main() {
+    let args: Vec<String> = std::env::args().collect();
+    let daemon_mode = args.iter().any(|a| a == "--daemon");
 
-    let addr = SocketAddr::from(([0, 0, 0, 0], 9000));
-    let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
+    if daemon_mode {
+        use daemonize::Stdio;
+        use std::fs::File;
 
-    println!("SERVER running on http://{}", addr);
+        let stdout = File::create("/tmp/remote-notifier.log").unwrap();
+        let stderr = stdout.try_clone().unwrap();
 
-    axum::serve(listener, app).await.unwrap();
+        let daemon = Daemonize::new()
+            .pid_file("/tmp/remote-notifier.pid")
+            .working_directory("/tmp")
+            .stdout(Stdio::from(stdout))
+            .stderr(Stdio::from(stderr));
+
+        match daemon.start() {
+            Ok(_) => println!("Daemon started"),
+            Err(e) => eprintln!("Error starting daemon: {}", e),
+        }
+    }
+
+    run_server();
 }
+
+fn run_server() {
+    let rt = tokio::runtime::Runtime::new().unwrap();
+    rt.block_on(async {
+        let app = Router::new().route("/", post(notify));
+
+        let addr = SocketAddr::from(([0, 0, 0, 0], 9000));
+        let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
+
+        println!("SERVER running on http://{}", addr);
+
+        axum::serve(listener, app).await.unwrap();
+    });
+}
+

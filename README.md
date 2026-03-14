@@ -38,7 +38,11 @@ A simple client/server setup that works through SSH reverse port forwarding - no
 
 1. **Start the server on your local machine:**
    ```bash
+   # Run in foreground
    ./target/release/remote-notifier
+
+   # Or run as daemon (background)
+   ./target/release/remote-notifier --daemon
    ```
 
 2. **Set up reverse SSH tunnel:**
@@ -75,9 +79,19 @@ cargo build --release
 # Run server
 ./target/release/remote-notifier
 
+# Or run as daemon (background)
+./target/release/remote-notifier --daemon
+
 # Set up tunnel (in another terminal or background)
 ./reverse-ssh.sh user@container
+
+# Kill daemon when done
+kill $(cat /tmp/remote-notifier.pid)
 
 # Kill tunnel when done
 pkill -f "ssh.*-R 9000"
 ```
+
+When running with `--daemon`:
+- PID file: `/tmp/remote-notifier.pid`
+- Log file: `/tmp/remote-notifier.log`
