@@ -15,10 +15,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: stable
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
 
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v6
