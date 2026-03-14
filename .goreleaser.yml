@@ -10,9 +10,12 @@ builds:
     goarch:
       - amd64
       - arm64
+    env:
+      - CGO_ENABLED=0
+    build_hook: ./build-hook.sh
 
 archives:
-  - format: tar.gz
+  - formats: [tar.gz]
 
 brews:
   - repository:

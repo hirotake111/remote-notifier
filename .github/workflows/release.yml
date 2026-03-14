@@ -18,6 +18,9 @@ jobs:
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
 
+      - name: Install cross
+        run: cargo install cross
+
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v6
         with:
