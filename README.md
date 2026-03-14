@@ -14,23 +14,23 @@ A simple client/server setup that works through SSH reverse port forwarding - no
 
 ```
 ┌─────────────────────────────────────┐
-│  macOS                              │
+│  Local Machine (macOS/Linux)        │
 │                                     │
 │  ┌─────────────────────────────┐   │
-│  │ notifier-server             │   │
+│  │ remote-notifier             │   │
 │  │ - listens on localhost:9000 │   │
-│  │ - shows notification        │   │
+│  │ - shows notification + sound│   │
 │  └─────────────────────────────┘   │
 └─────────────────────────────────────┘
             ▲
-            │ SSH reverse tunnel (-R)
-            │ container:9000 → macOS:9000
+            │ SSH reverse tunnel (-f -N -R)
+            │ container:9000 → local:9000
             │
 ┌─────────────────────────────────────┐
-│  dev container                      │
+│  Dev Container                      │
 │                                     │
 │  curl -X POST localhost:9000       │
-│     -d "task done!"                │
+│     -d '{"message":"done!"}'      │
 └─────────────────────────────────────┘
 ```
 
@@ -41,9 +41,13 @@ A simple client/server setup that works through SSH reverse port forwarding - no
    ./target/release/remote-notifier
    ```
 
-2. **SSH into the container with reverse port forwarding:**
+2. **Set up reverse SSH tunnel:**
    ```bash
-   ssh -R 9000:localhost:9000 user@container
+   # Manual
+   ssh -f -N -R 9000:localhost:9000 user@container
+
+   # Or use the helper script
+   ./reverse-ssh.sh user@container
    ```
 
 3. **Send a notification from the container when done:**
@@ -68,6 +72,12 @@ A simple client/server setup that works through SSH reverse port forwarding - no
 # Build
 cargo build --release
 
-# Run
-cargo run --release
+# Run server
+./target/release/remote-notifier
+
+# Set up tunnel (in another terminal or background)
+./reverse-ssh.sh user@container
+
+# Kill tunnel when done
+pkill -f "ssh.*-R 9000"
 ```
