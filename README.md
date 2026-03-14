@@ -39,16 +39,16 @@ A simple client/server setup that works through SSH reverse port forwarding - no
 1. **Start the server on your local machine:**
    ```bash
    # Run in foreground
-   ./target/release/remote-notifier
+   ./target/release.sh/remote-notifier
 
    # Run as daemon (background)
-   ./target/release/remote-notifier --daemon
+   ./target/release.sh/remote-notifier --daemon
 
    # Or run with tunnel (foreground)
-   ./target/release/remote-notifier --tunnel user@container
+   ./target/release.sh/remote-notifier --tunnel user@container
 
    # Or run as daemon with tunnel
-   ./target/release/remote-notifier --daemon --tunnel user@container
+   ./target/release.sh/remote-notifier --daemon --tunnel user@container
    ```
 
 2. **Send a notification from the container when done:**
@@ -69,21 +69,40 @@ A simple client/server setup that works through SSH reverse port forwarding - no
 
 ## Installation
 
+### Homebrew (Recommended)
+
 ```bash
-# Build
-cargo build --release
+brew install hirotake111/homebrew-tap/remote-notifier
 
 # Run server
-./target/release/remote-notifier
+remote-notifier
 
 # Run with tunnel (all-in-one)
-./target/release/remote-notifier --tunnel user@container
+remote-notifier --tunnel user@container
 
 # Run as daemon with tunnel
-./target/release/remote-notifier --daemon --tunnel user@container
+remote-notifier --daemon --tunnel user@container
+```
+
+### Build from source
+
+```bash
+# Clone and build
+git clone https://github.com/hirotake111/remote-notifier.git
+cd remote-notifier
+cargo build --release.sh
+
+# Run server
+./target/release.sh/remote-notifier
+
+# Run with tunnel (all-in-one)
+./target/release.sh/remote-notifier --tunnel user@container
+
+# Run as daemon with tunnel
+./target/release.sh/remote-notifier --daemon --tunnel user@container
 
 # Stop the tunnel
-./target/release/remote-notifier --kill-tunnel
+./target/release.sh/remote-notifier --kill-tunnel
 
 # Stop the daemon
 kill $(cat /tmp/remote-notifier.pid)
@@ -116,3 +135,20 @@ Ensure your SSH key is set up for passwordless authentication:
 ```bash
 ssh-copy-id <user@host>
 ```
+
+## Release
+
+To create a new release.sh:
+
+```bash
+# Using the release.sh script (recommended)
+./release.sh vX.Y.Z
+
+# Or manually:
+git add .
+git commit -m "Release vX.Y.Z"
+git tag vX.Y.Z
+git push origin vX.Y.Z
+```
+
+This will trigger the GitHub Actions workflow which builds binaries for Linux/macOS (x86_64 + arm64) and publishes them as a GitHub Release. The Homebrew formula will also be updated automatically.
