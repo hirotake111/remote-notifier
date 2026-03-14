@@ -15,6 +15,7 @@ archives:
   - format: tar.gz
 
 brews:
-  - owner: hirotake111
-    name: remote-notifier
-    repo: homebrew-tap
+  - repository:
+      owner: hirotake111
+      name: homebrew-tap
+      token: "{{ .Env.TAP_GITHUB_TOKEN }}"
