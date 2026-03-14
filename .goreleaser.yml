@@ -15,7 +15,6 @@ archives:
   - format: tar.gz
 
 brews:
-  - tap:
-      owner: hirotake111
-      name: homebrew-tap
+  - owner: hirotake111
     name: remote-notifier
+    repo: homebrew-tap
