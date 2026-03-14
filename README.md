@@ -41,20 +41,17 @@ A simple client/server setup that works through SSH reverse port forwarding - no
    # Run in foreground
    ./target/release/remote-notifier
 
-   # Or run as daemon (background)
+   # Run as daemon (background)
    ./target/release/remote-notifier --daemon
+
+   # Or run with tunnel (foreground)
+   ./target/release/remote-notifier --tunnel user@container
+
+   # Or run as daemon with tunnel
+   ./target/release/remote-notifier --daemon --tunnel user@container
    ```
 
-2. **Set up reverse SSH tunnel:**
-   ```bash
-   # Manual
-   ssh -f -N -R 9000:localhost:9000 user@container
-
-   # Or use the helper script
-   ./reverse-ssh.sh user@container
-   ```
-
-3. **Send a notification from the container when done:**
+2. **Send a notification from the container when done:**
    ```bash
    curl -X POST localhost:9000 \
      -H "Content-Type: application/json" \
@@ -79,19 +76,43 @@ cargo build --release
 # Run server
 ./target/release/remote-notifier
 
-# Or run as daemon (background)
-./target/release/remote-notifier --daemon
+# Run with tunnel (all-in-one)
+./target/release/remote-notifier --tunnel user@container
 
-# Set up tunnel (in another terminal or background)
-./reverse-ssh.sh user@container
+# Run as daemon with tunnel
+./target/release/remote-notifier --daemon --tunnel user@container
 
-# Kill daemon when done
+# Stop the tunnel
+./target/release/remote-notifier --kill-tunnel
+
+# Stop the daemon
 kill $(cat /tmp/remote-notifier.pid)
-
-# Kill tunnel when done
-pkill -f "ssh.*-R 9000"
 ```
 
-When running with `--daemon`:
-- PID file: `/tmp/remote-notifier.pid`
-- Log file: `/tmp/remote-notifier.log`
+## Flags
+
+| Flag | Description |
+|------|-------------|
+| `--daemon` | Run in background |
+| `--tunnel <user@host>` | Start SSH reverse tunnel |
+| `--kill-tunnel` | Stop the tunnel |
+
+## Troubleshooting
+
+### "remote port forwarding failed for listen port 9000"
+
+The remote port 9000 is already in use (stale tunnel from a previous run).
+
+**Solution:** Kill the process on the remote server:
+
+```bash
+ssh <user@host> "sudo fuser -k 9000/tcp"
+```
+
+### Binary hangs at "Testing SSH connection..."
+
+Ensure your SSH key is set up for passwordless authentication:
+
+```bash
+ssh-copy-id <user@host>
+```
