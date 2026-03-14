@@ -1,0 +1,19 @@
+project_name: remote-notifier
+
+builds:
+  - binary: remote-notifier
+    goos:
+      - linux
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+
+archives:
+  - format: tar.gz
+
+brews:
+  - tap:
+      owner: hirotake111
+      name: homebrew-tap
+    name: remote-notifier

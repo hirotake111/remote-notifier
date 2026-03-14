@@ -16,11 +16,11 @@ A simple client/server setup that works through SSH reverse port forwarding - no
 ┌─────────────────────────────────────┐
 │  Local Machine (macOS/Linux)        │
 │                                     │
-│  ┌─────────────────────────────┐   │
-│  │ remote-notifier             │   │
-│  │ - listens on localhost:9000 │   │
-│  │ - shows notification + sound│   │
-│  └─────────────────────────────┘   │
+│  ┌─────────────────────────────┐    │
+│  │ remote-notifier             │    │
+│  │ - listens on localhost:9000 │    │
+│  │ - shows notification + sound│    │
+│  └─────────────────────────────┘    │
 └─────────────────────────────────────┘
             ▲
             │ SSH reverse tunnel (-f -N -R)
@@ -29,8 +29,8 @@ A simple client/server setup that works through SSH reverse port forwarding - no
 ┌─────────────────────────────────────┐
 │  Dev Container                      │
 │                                     │
-│  curl -X POST localhost:9000       │
-│     -d '{"message":"done!"}'      │
+│  curl -X POST localhost:9000        │
+│     -d '{"message":"done!"}'        │
 └─────────────────────────────────────┘
 ```
 
